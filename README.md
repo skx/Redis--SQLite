@@ -25,14 +25,16 @@ SYNOPSIS
 
 DESCRIPTION
 ------------
-This module allows you to easily migration from using Redis to store
-your data away to SQLite.
+This module allows you to easily migrate your applications from storing
+their data in Redis to using SQLite instead.
 
 Simply change from `use Redis` to `use Redis::SQLite` and your code
 should continue to work.
 
-NOTE: We support get/set/incr/decr as well as the set-related primitives.
-If you're using other Redis features you're temporarily out of luck.
+This module is compatible with the original Redis client-library,
+providing you're only using simple key-operations, and set-primitives.
+Specifically this means we do not support any use of Hashes, ZSETS,
+or clustering methods.
 
 
 MOTIVATION
