@@ -5,15 +5,38 @@ Redis::SQLite - Redis API-compatible storage system using SQLite.
 
 =cut
 
+=head1 SYNOPSIS
+
+=for example begin
+
+    #!/usr/bin/perl -w
+
+    use Redis::SQLite;
+    use strict;
+
+    my $db = Redis::SQLite->new();
+
+    $db->set( "foo", "bar" );
+
+    print $db->get( "foo" ) . "\n";
+
+=for example end
+
+
 =head1 DESCRIPTION
 
 This package is an implementation of the L<Redis> Perl-client API, which
 stores all data in an SQLite database.
 
-It is I<not> a drop-in replacement, because it doesn't implement all the
+It is B<not> a drop-in replacement, because it doesn't implement all the
 features you'd expect from the real Redis module.  Just enough to be useful.
 
 =cut
+
+=head1 METHODS
+
+=cut
+
 
 package Redis::SQLite;
 
@@ -27,11 +50,9 @@ use DBI;
 our $VERSION = '0.1';
 
 
-=begin doc
+=head2 new
 
 Constructor
-
-=end doc
 
 =cut
 
@@ -75,11 +96,9 @@ sub new
 }
 
 
-=begin doc
+=head2 get
 
 Get the value of a string-key.
-
-=end doc
 
 =cut
 
@@ -100,11 +119,9 @@ sub get
 
 
 
-=begin doc
+=head2 set
 
 Set the value of a string-key.
-
-=end doc
 
 =cut
 
@@ -125,11 +142,9 @@ sub set
 
 
 
-=begin doc
+=head2 incr
 
 Increment and return the value of an (integer) string-key.
-
-=end doc
 
 =cut
 
@@ -148,11 +163,9 @@ sub incr
 
 
 
-=begin doc
+=head2 decr
 
 Decrement and return the value of an (integer) string-key.
-
-=end doc
 
 =cut
 
@@ -171,11 +184,9 @@ sub decr
 
 
 
-=begin doc
+=head2 del
 
 Delete a given key, regardless of whether it holds a string or a set.
-
-=end doc
 
 =cut
 
@@ -196,12 +207,10 @@ sub del
 }
 
 
-=begin doc
+=head2 keys
 
 Get known-keys.  These can be optionally filtered by a (perl) regular
 expression.
-
-=end doc
 
 =cut
 
@@ -244,11 +253,9 @@ sub keys
 }
 
 
-=begin doc
+=head2 smembers
 
 Get members of the given set.
-
-=end doc
 
 =cut
 
@@ -274,11 +281,9 @@ sub smembers
 }
 
 
-=begin doc
+=head2 sismember
 
 Is the given item a member of the set?
-
-=end doc
 
 =cut
 
@@ -300,11 +305,9 @@ sub sismember
     return 0;
 }
 
-=begin doc
+=head2 sadd
 
 Add a member to a set.
-
-=end doc
 
 =cut
 
@@ -325,11 +328,9 @@ sub sadd
 }
 
 
-=begin doc
+=head2 srem
 
 Remove a member from a set.
-
-=end doc
 
 =cut
 
@@ -347,11 +348,9 @@ sub srem
 }
 
 
-=begin doc
+=head2 srandmember
 
 Fetch the value of a random member from a set.
-
-=end doc
 
 =cut
 
@@ -374,11 +373,9 @@ sub srandmember
 }
 
 
-=begin doc
+=head2 sunion
 
 Return the values which are present in each of the sets named.
-
-=end doc
 
 =cut
 
@@ -402,11 +399,9 @@ sub sunion
 }
 
 
-=begin doc
+=head2 sinter
 
 Return only those members who exist in all the named sets.
-
-=end doc
 
 =cut
 
@@ -438,11 +433,9 @@ sub sinter
 }
 
 
-=begin doc
+=head2 scard
 
 Count the members of the given set.
-
-=end doc
 
 =cut
 
@@ -462,7 +455,29 @@ sub scard
     return ($count);
 }
 
-#
-#  End of the module.
-#
+
+
 1;
+
+
+
+=head1 AUTHOR
+
+Steve Kemp
+
+http://www.steve.org.uk/
+
+=cut
+
+
+
+=head1 LICENSE
+
+Copyright (c) 2016 by Steve Kemp.  All rights reserved.
+
+This module is free software;
+you can redistribute it and/or modify it under
+the same terms as Perl itself.
+The LICENSE file contains the full text of the license.
+
+=cut
