@@ -7,7 +7,7 @@ LINKS
 -----
 
 * Github
-   https://github.com/skx/Redis--SQLite
+   * https://github.com/skx/Redis--SQLite
 * Mirror
    * https://git.steve.org.uk/cpan/Redis--SQLite
 
@@ -15,12 +15,12 @@ LINKS
 SYNOPSIS
 --------
 
-   use Redis::SQLite;
+    use Redis::SQLite;
 
-   my $r = Redis::SQLite->new();
-   $r->set( "foo", "bar" );
+    my $r = Redis::SQLite->new();
+    $r->set( "foo", "bar" );
 
-   $r->incr( "counter");
+    $r->incr( "counter");
 
 
 DESCRIPTION
