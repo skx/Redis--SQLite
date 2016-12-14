@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use File::Temp qw! tempfile !;
-use Test::More tests => 7;
+use Test::More tests => 10;
 
 BEGIN
 {
@@ -39,6 +39,15 @@ is( $redis->scard("finnish"), 3, "The 'finnish' set has three members" );
 # The union should thus be six entries long
 my @combined = $redis->sunion( "english", "finnish" );
 is( scalar @combined, 6, "The union has six members" );
+
+# Now we'll test the storing of that union.
+is( scalar $redis->keys(), 2, "Before SUNIONSTORE we have two keys" );
+$redis->sunionstore( "combined", "english", "finnish" );
+is( scalar $redis->keys(), 3, "After SUNIONSTORE we have three keys" );
+
+# The union-set should have the number of members we expect.
+is( $redis->scard("combined"),
+    6, "The combined set has the right number of members" );
 
 # Cleanup
 unlink($filename);

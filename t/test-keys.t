@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use File::Temp qw! tempfile !;
-use Test::More tests => 7;
+use Test::More tests => 21;
 
 BEGIN
 {
@@ -26,7 +26,9 @@ is( scalar $redis->keys(), 0, "There are no keys by default" );
 # Add some keys
 foreach my $x (qw! foo bar baz bart bort bark !)
 {
+    is( $redis->exists($x), 0, "The key doesn't exist prior to creation" );
     $redis->set( $x, $x );
+    is( $redis->exists($x), 1, "The key does exist post-creation" );
 }
 
 # Now we should have six keys
@@ -37,6 +39,14 @@ is( scalar $redis->keys("^ba"), 4, "We filtered them appropriately" );
 
 # But we'll have only one "oo" match.
 is( scalar $redis->keys("oo\$"), 1, "We filtered them appropriately, again" );
+
+#
+# Add a set to see if `exists` works on that.
+#
+is( $redis->exists("set.foo"),
+    0, "The set-key doesn't exist prior to creation" );
+$redis->sadd( "set.foo", "bar" );
+is( $redis->exists("set.foo"), 1, "The set-key exists post-creation" );
 
 # Cleanup
 unlink($filename);

@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use File::Temp qw! tempfile !;
-use Test::More tests => 6;
+use Test::More tests => 7;
 
 BEGIN
 {
@@ -23,22 +23,18 @@ isa_ok( $redis, "Redis::SQLite", "Created Redis::SQLite object" );
 # We should have zero keys.
 is( scalar $redis->keys(), 0, "There are no keys by default" );
 
-# Set a known-value
-$redis->set( "foo", 26 );
+# Now we set a greeting.
+$redis->set( "greet", "Hello" );
 
-# Run five decrement options
-for ( my $i = 0 ; $i < 5 ; $i++ )
-{
-    # Decrease by *FOUR* each time.
-    $redis->decby( "foo", 4 );
-}
-
-# We should have one key now.
+# Which will result in a single key.
 is( scalar $redis->keys(), 1, "There is now a single key" );
 
-# Which should have the value five
-is( $redis->get("foo"), 6, "We have the correct value" );
+# Now we append
+$redis->append( "greet", ", world" );
+is( scalar $redis->keys(), 1, "There is still only a single key" );
 
+# Fetching the value should result in 'Hello, world'
+is( $redis->get( "greet" ), "Hello, world" , "Appending worked" );
 
 # Cleanup
 unlink($filename);
