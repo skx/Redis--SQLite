@@ -433,6 +433,34 @@ sub sinter
 }
 
 
+
+=head2 sinterstore
+
+Return only those members who exist in all the named sets.
+
+=cut
+
+sub sinterstore
+{
+    my ( $self, $dest, @names ) = (@_);
+
+    # Get the values that intersect
+    my @update = $self->sinter(@names);
+
+    # Delete the current contents of the destination.
+    $self->del($dest);
+
+    # Now store the members
+    foreach my $ent (@update)
+    {
+        $self->sadd( $dest, $ent );
+    }
+
+    # Return the number of entries added
+    return ( scalar @update );
+}
+
+
 =head2 scard
 
 Count the members of the given set.
@@ -456,6 +484,16 @@ sub scard
 }
 
 
+
+sub quit
+{
+    warn "Method not implemented: quit";
+}
+
+sub expire
+{
+    warn "Method not implemented: expire";
+}
 
 1;
 

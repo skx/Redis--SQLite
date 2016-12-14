@@ -43,5 +43,39 @@ my @combined = $redis->sinter( "english", "finnish" );
 is( scalar @combined, 1,       "The union has the expected overlap members" );
 is( $combined[0],     "Steve", "Which is what we expect" );
 
+
+# Now we're going to test SINTERSTORE
+$redis->sadd( "a", "1" );
+$redis->sadd( "a", "2" );
+$redis->sadd( "a", "3" );
+
+$redis->sadd( "b", "2" );
+$redis->sadd( "b", "3" );
+$redis->sadd( "b", "4" );
+
+
+# The intersection should have two entries: 2 + 3.
+my @both = $redis->sinter( "a", "b" );
+is( scalar @both, 2, "The union has the expected overlap members" );
+
+# Now we count the keys and we should have four
+is( scalar $redis->keys(), 4, "Before SINTERSTORE we have four keys" );
+
+# Store the resulting intersection
+$redis->sinterstore( "union", "a", "b" );
+
+# ANd our keys should have increased.
+is( scalar $redis->keys(), 5, "After SINTERSTORE we have five keys" );
+
+# The value of the set should be : 2 + 3
+my @res = $redis->smembers("union");
+is( scalar @res, 2, "The union has the expected overlap members" );
+
+# Delete them both
+$redis->srem( "union", "2" );
+$redis->srem( "union", "3" );
+@res = $redis->smembers("union");
+is( scalar @res, 0, "The emptied union has zero members" );
+
 # Cleanup
 unlink($filename);
