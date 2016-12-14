@@ -1,3 +1,20 @@
+
+=head1 NAME
+
+Redis::SQLite - Redis API-compatible storage system using SQLite.
+
+=cut
+
+=head1 DESCRIPTION
+
+This package is an implementation of the L<Redis> Perl-client API, which
+stores all data in an SQLite database.
+
+It is I<not> a drop-in replacement, because it doesn't implement all the
+features you'd expect from the real Redis module.  Just enough to be useful.
+
+=cut
+
 package Redis::SQLite;
 
 
@@ -216,6 +233,28 @@ sub smembers
     return (@vals);
 }
 
+
+#
+# Is the given item a member of the set?
+#
+sub sismember
+{
+    my ( $self, $set, $key ) = (@_);
+
+    my $sql =
+      $self->{ 'db' }->prepare("SELECT val FROM sets WHERE key=? AND val=?");
+    $sql->execute( $set, $key );
+
+    my $x = $sql->fetchrow_array() || undef;
+    $sql->finish();
+
+    if ( defined($x) && ( $x eq $key ) )
+    {
+        return 1;
+    }
+    return 0;
+}
+
 #
 #  Add a member to a set.
 #
@@ -272,6 +311,55 @@ sub srandmember
     $self->{ 'srandommember' }->finish();
 
     return ($x);
+}
+
+
+sub sunion
+{
+    my ( $self, @keys ) = (@_);
+
+
+    my @result;
+
+    foreach my $key (@keys)
+    {
+        my @vals = $self->smembers($key);
+        foreach my $val (@vals)
+        {
+            push( @result, $val );
+        }
+    }
+
+    return (@result);
+}
+
+
+
+sub sinter
+{
+    my ( $self, @names ) = (@_);
+
+    my %seen;
+
+    foreach my $key (@names)
+    {
+        my @vals = $self->smembers($key);
+        foreach my $val (@vals)
+        {
+            $seen{ $val } += 1;
+        }
+    }
+
+    my @result;
+
+    foreach my $key ( CORE::keys(%seen) )
+    {
+        if ( $seen{ $key } == scalar @names )
+        {
+            push( @result, $key );
+        }
+    }
+    return (@result);
 }
 
 
