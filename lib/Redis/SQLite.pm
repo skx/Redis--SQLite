@@ -1,7 +1,7 @@
 
 =head1 NAME
 
-Redis::SQLite - Redis API-compatible storage system using SQLite.
+Redis::SQLite - Redis-Compatible module which writes to SQLite.
 
 =cut
 
@@ -26,10 +26,98 @@ Redis::SQLite - Redis API-compatible storage system using SQLite.
 =head1 DESCRIPTION
 
 This package is an implementation of the L<Redis> Perl-client API, which
-stores all data in an SQLite database.
+stores all data in an SQLite database rather than in RAM.
 
 It is B<not> a drop-in replacement, because it doesn't implement all the
 features you'd expect from the real Redis module.  Just enough to be useful.
+
+=cut
+
+=head1 COMPATIBILITY
+
+This module is designed to be source compatible with the L<Redis> module,
+providing you're only operating upon either sets or simple strings.
+Specifically we do not support ZSET or HASH-related operations.
+
+The following methods are implemented as part of the basic-functionality:
+
+=over 8
+
+=item APPEND
+
+=item EXISTS
+
+=item GET
+
+=item GETSET
+
+=item SET
+
+=item INCR
+
+=item INCBY
+
+=item DECR
+
+=item DECBY
+
+=item DEL
+
+=item STRLEN
+
+=back
+
+
+The following methods will emit a warning when used
+
+=over 8
+
+=item EXPIRE
+
+=item PING
+
+=item QUIT
+
+=item SELECT
+
+=back
+
+
+The following set-related methods are implemented:
+
+=over 8
+
+=item SADD
+
+=item SCARD
+
+=item SDIFF
+
+=item SDIFFSTORE
+
+=item SINTER
+
+=item SINTERSTORE
+
+=item SISMEMBER
+
+=item SMEMBERS
+
+=item SMOVE
+
+=item SPOP
+
+=item SRANDMEMBER
+
+=item SREM
+
+=item SUNION
+
+=item SUNIONSTORE
+
+=back
+
+The only missing set-method is C<SSCAN>.
 
 =cut
 
@@ -52,7 +140,9 @@ our $VERSION = '0.1';
 
 =head2 new
 
-Constructor
+Constructor.  The only (optional) argument is C<path> which will
+change the default SQLite database-file location, if unspecified
+C<~/.predis.db> will be used.
 
 =cut
 
@@ -72,7 +162,7 @@ sub new
       DBI->connect( "dbi:SQLite:dbname=$file", "", "", { AutoCommit => 1 } );
 
     #
-    #  Create teh database if it is missing.
+    #  Populate the database tables, if it was missing.
     #
     if ($create)
     {
@@ -96,9 +186,61 @@ sub new
 }
 
 
+=head2 append
+
+Append the given string to the contents of the existing key, creating it
+if didn't previously exist.
+
+=cut
+
+sub append
+{
+    my ( $self, $key, $data ) = (@_);
+
+    my $r = $self->get($key);
+    $r .= $data;
+    $self->set( $key, $r );
+}
+
+
+=head2 exists
+
+Does the given key exist?
+
+=cut
+
+sub exists
+{
+    my ( $self, $key ) = (@_);
+
+    my $sql = $self->{ 'db' }->prepare("SELECT key FROM string WHERE key=?");
+    $sql->execute($key);
+    my $x = $sql->fetchrow_array() || undef;
+    $sql->finish();
+
+    if ($x)
+    {
+        return 1;
+    }
+
+    $sql = $self->{ 'db' }->prepare("SELECT key FROM sets WHERE key=?");
+    $sql->execute($key);
+    $x = $sql->fetchrow_array() || undef;
+    $sql->finish();
+
+    if ($x)
+    {
+        return 1;
+    }
+
+    return 0;
+}
+
+
 =head2 get
 
-Get the value of a string-key.
+Get the value of a string-key.  Returns C<undef> if the key didn't exist,
+or contain data.
 
 =cut
 
@@ -117,6 +259,42 @@ sub get
     return ($x);
 }
 
+
+
+=head2 getset
+
+Update the value of a key, and return the previous value if any.
+
+=cut
+
+sub getset
+{
+    my ( $self, $key, $val ) = (@_);
+
+    my $old = $self->get($key);
+    $self->set( $key, $val );
+
+    return ($old);
+}
+
+
+=head2 strlen
+
+Return the length of the given value of the given key.
+
+=cut
+
+sub strlen
+{
+    my ( $self, $key ) = (@_);
+
+    my $data = $self->get($key);
+    if ( defined($data) )
+    {
+        return ( length($data) );
+    }
+    return 0;
+}
 
 
 =head2 set
@@ -150,6 +328,21 @@ Increment and return the value of an (integer) string-key.
 
 sub incr
 {
+    my ( $self, $key ) = (@_);
+
+    return ( $self->incby( $key, 1 ) );
+}
+
+
+
+=head2 incby
+
+Increment and return the value of an (integer) string-key.
+
+=cut
+
+sub incby
+{
     my ( $self, $key, $amt ) = (@_);
 
     $amt = 1 if ( !defined($amt) );
@@ -162,7 +355,6 @@ sub incr
 }
 
 
-
 =head2 decr
 
 Decrement and return the value of an (integer) string-key.
@@ -170,6 +362,21 @@ Decrement and return the value of an (integer) string-key.
 =cut
 
 sub decr
+{
+    my ( $self, $key ) = (@_);
+
+    return ( $self->decby( $key, 1 ) );
+}
+
+
+
+=head2 decby
+
+Decrement and return the value of an (integer) string-key.
+
+=cut
+
+sub decby
 {
     my ( $self, $key, $amt ) = (@_);
 
@@ -181,7 +388,6 @@ sub decr
 
     return ($cur);
 }
-
 
 
 =head2 del
@@ -209,8 +415,19 @@ sub del
 
 =head2 keys
 
-Get known-keys.  These can be optionally filtered by a (perl) regular
-expression.
+Return the names of each known key.
+
+These can be optionally filtered by a (perl) regular expression, for example:
+
+=for example begin
+
+   $redis->set( "foo", 1 );
+   $redis->set( "moo", 1 );
+
+   $redis->keys( "^f" );   # -> [ "foo" ]
+   $redis->keys( "oo\$" ); # -> [ "foo", "moo" ]
+
+=for example end
 
 =cut
 
@@ -255,7 +472,7 @@ sub keys
 
 =head2 smembers
 
-Get members of the given set.
+Return the members of the given set.
 
 =cut
 
@@ -278,6 +495,32 @@ sub smembers
     $self->{ 'smembers' }->finish();
 
     return (@vals);
+}
+
+
+=head2 smove
+
+Move a member from a given set to a new one.
+
+=cut
+
+sub smove
+{
+    my ( $self, $src, $dst, $ent ) = (@_);
+
+    # Get the value from the original set
+    my $sql = $self->{ 'db' }
+      ->prepare("UPDATE sets SET key=? WHERE ( key=? AND val=?)");
+
+    $sql->execute( $dst, $src, $ent );
+    $sql->finish();
+
+    if ( $sql->rows > 0 )
+    {
+        return 1;
+    }
+    return 0;
+
 }
 
 
@@ -304,6 +547,7 @@ sub sismember
     }
     return 0;
 }
+
 
 =head2 sadd
 
@@ -348,6 +592,34 @@ sub srem
 }
 
 
+=head2 spop
+
+Remove a given number of elements from the named set, and return them.
+
+=cut
+
+sub spop
+{
+    my ( $self, $key, $count ) = (@_);
+
+    $count = 1 if ( !defined($count) );
+
+    my @res;
+
+    while ( ( $count > 0 ) && ( $count <= $self->scard($key) ) )
+    {
+        my $rand = $self->srandmember($key);
+        push( @res, $rand );
+        $self->srem( $key, $rand );
+
+        $count -= 1;
+    }
+
+    return (@res);
+}
+
+
+
 =head2 srandmember
 
 Fetch the value of a random member from a set.
@@ -375,7 +647,24 @@ sub srandmember
 
 =head2 sunion
 
-Return the values which are present in each of the sets named.
+Return the values which are present in each of the sets named, duplicates
+will only be returned one time.
+
+For example:
+
+=for example begin
+
+   $redis->sadd( "one", 1 );
+   $redis->sadd( "one", 2 );
+   $redis->sadd( "one", 3 );
+
+   $redis->sadd( "two", 2 );
+   $redis->sadd( "two", 3 );
+   $redis->sadd( "two", 4 );
+
+   $redis->sunion( "one", "two" ); # -> [ 1,2,3,4 ]
+
+=for example end
 
 =cut
 
@@ -384,24 +673,65 @@ sub sunion
     my ( $self, @keys ) = (@_);
 
 
-    my @result;
+    my %result;
 
     foreach my $key (@keys)
     {
         my @vals = $self->smembers($key);
         foreach my $val (@vals)
         {
-            push( @result, $val );
+            $result{ $val } += 1;
         }
     }
 
-    return (@result);
+    return ( CORE::keys(%result) );
+}
+
+
+=head2 sunionstore
+
+Store the values which are present in each of the named sets in a new set.
+
+=cut
+
+sub sunionstore
+{
+    my ( $self, $dest, @keys ) = (@_);
+
+    # Get the union
+    my @union = $self->sunion(@keys);
+
+    # Delete the current contents of the destination.
+    $self->del($dest);
+
+    # Now store the members
+    foreach my $ent (@union)
+    {
+        $self->sadd( $dest, $ent );
+    }
+
+    # Return the number of entries added
+    return ( scalar @union );
 }
 
 
 =head2 sinter
 
-Return only those members who exist in all the named sets.
+Return only those members who exist in each of the named sets.
+
+=for example begin
+
+   $redis->sadd( "one", 1 );
+   $redis->sadd( "one", 2 );
+   $redis->sadd( "one", 3 );
+
+   $redis->sadd( "two", 2 );
+   $redis->sadd( "two", 3 );
+   $redis->sadd( "two", 4 );
+
+   $redis->sinter( "one", "two" ); # -> [ 2,3 ]
+
+=for example end
 
 =cut
 
@@ -436,7 +766,7 @@ sub sinter
 
 =head2 sinterstore
 
-Return only those members who exist in all the named sets.
+Store those members who exist in all the named sets in a new set.
 
 =cut
 
@@ -463,7 +793,7 @@ sub sinterstore
 
 =head2 scard
 
-Count the members of the given set.
+Count the number of entries in the given set.
 
 =cut
 
@@ -485,9 +815,19 @@ sub scard
 
 
 
+sub ping
+{
+    warn "Method not implemented: ping";
+}
+
 sub quit
 {
     warn "Method not implemented: quit";
+}
+
+sub select
+{
+    warn "Method not implemented: select";
 }
 
 sub expire
