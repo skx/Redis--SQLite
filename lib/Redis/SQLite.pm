@@ -27,9 +27,14 @@ use DBI;
 our $VERSION = '0.1';
 
 
-#
-# Constructor
-#
+=begin doc
+
+Constructor
+
+=end doc
+
+=cut
+
 sub new
 {
     my ( $proto, %supplied ) = (@_);
@@ -70,9 +75,14 @@ sub new
 }
 
 
-#
-#  Get the value of a string-key.
-#
+=begin doc
+
+Get the value of a string-key.
+
+=end doc
+
+=cut
+
 sub get
 {
     my ( $self, $key ) = (@_);
@@ -90,9 +100,14 @@ sub get
 
 
 
-#
-#  Set the value of a string-key.
-#
+=begin doc
+
+Set the value of a string-key.
+
+=end doc
+
+=cut
+
 sub set
 {
     my ( $self, $key, $val ) = (@_);
@@ -110,9 +125,14 @@ sub set
 
 
 
-#
-#  Increment and return the value of an (integer) string-key.
-#
+=begin doc
+
+Increment and return the value of an (integer) string-key.
+
+=end doc
+
+=cut
+
 sub incr
 {
     my ( $self, $key, $amt ) = (@_);
@@ -128,10 +148,14 @@ sub incr
 
 
 
+=begin doc
 
-#
-#  Decrement and return the value of an (integer) string-key.
-#
+Decrement and return the value of an (integer) string-key.
+
+=end doc
+
+=cut
+
 sub decr
 {
     my ( $self, $key, $amt ) = (@_);
@@ -147,9 +171,14 @@ sub decr
 
 
 
-#
-#  Delete a string-key.
-#
+=begin doc
+
+Delete a given key, regardless of whether it holds a string or a set.
+
+=end doc
+
+=cut
+
 sub del
 {
     my ( $self, $key ) = (@_);
@@ -167,9 +196,15 @@ sub del
 }
 
 
-#
-# Get known-keys
-#
+=begin doc
+
+Get known-keys.  These can be optionally filtered by a (perl) regular
+expression.
+
+=end doc
+
+=cut
+
 sub keys
 {
     my ( $self, $pattern ) = (@_);
@@ -209,9 +244,14 @@ sub keys
 }
 
 
-#
-# Get members of the given set.
-#
+=begin doc
+
+Get members of the given set.
+
+=end doc
+
+=cut
+
 sub smembers
 {
     my ( $self, $key ) = (@_);
@@ -234,9 +274,14 @@ sub smembers
 }
 
 
-#
-# Is the given item a member of the set?
-#
+=begin doc
+
+Is the given item a member of the set?
+
+=end doc
+
+=cut
+
 sub sismember
 {
     my ( $self, $set, $key ) = (@_);
@@ -255,9 +300,14 @@ sub sismember
     return 0;
 }
 
-#
-#  Add a member to a set.
-#
+=begin doc
+
+Add a member to a set.
+
+=end doc
+
+=cut
+
 sub sadd
 {
     my ( $self, $key, $val ) = (@_);
@@ -275,9 +325,14 @@ sub sadd
 }
 
 
-#
-#  Remove a member from a set.
-#
+=begin doc
+
+Remove a member from a set.
+
+=end doc
+
+=cut
+
 sub srem
 {
     my ( $self, $key, $val ) = (@_);
@@ -292,9 +347,14 @@ sub srem
 }
 
 
-#
-#  Fetch the value of a random member from a set.
-#
+=begin doc
+
+Fetch the value of a random member from a set.
+
+=end doc
+
+=cut
+
 sub srandmember
 {
     my ( $self, $key ) = (@_);
@@ -313,6 +373,14 @@ sub srandmember
     return ($x);
 }
 
+
+=begin doc
+
+Return the values which are present in each of the sets named.
+
+=end doc
+
+=cut
 
 sub sunion
 {
@@ -334,6 +402,13 @@ sub sunion
 }
 
 
+=begin doc
+
+Return only those members who exist in all the named sets.
+
+=end doc
+
+=cut
 
 sub sinter
 {
@@ -363,9 +438,14 @@ sub sinter
 }
 
 
-#
-#  Find the number of values in the set
-#
+=begin doc
+
+Count the members of the given set.
+
+=end doc
+
+=cut
+
 sub scard
 {
     my ( $self, $key ) = (@_);
