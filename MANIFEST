@@ -8,6 +8,7 @@ META.yml
 t/00-load.t
 t/manifest.t
 t/pod.t
+t/redis.t
 t/style-no-tabs.t
 t/style-no-trailing-whitespace.t
 t/test-append.t
@@ -23,4 +24,3 @@ t/test-spop.t
 t/test-strict.t
 t/test-strlen.t
 t/test-union.t
-
