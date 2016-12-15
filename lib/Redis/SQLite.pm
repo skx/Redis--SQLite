@@ -596,6 +596,12 @@ sub srem
     }
     $self->{ 'srem' }->execute( $key, $val );
     $self->{ 'srem' }->finish();
+
+    if ( $self->{ 'srem' }->rows > 0 )
+    {
+        return 1;
+    }
+    return 0;
 }
 
 
