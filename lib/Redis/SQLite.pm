@@ -69,22 +69,6 @@ The following methods are implemented as part of the basic-functionality:
 
 =back
 
-
-The following methods will emit a warning when used
-
-=over 8
-
-=item EXPIRE
-
-=item PING
-
-=item QUIT
-
-=item SELECT
-
-=back
-
-
 The following set-related methods are implemented:
 
 =over 8
@@ -119,7 +103,8 @@ The following set-related methods are implemented:
 
 =back
 
-The only missing set-method is C<SSCAN>.
+The only missing set-method is C<SSCAN>, other methods which are missing
+will raise a C<warn>ing.
 
 =cut
 
@@ -866,24 +851,13 @@ sub scard
 
 
 
-sub ping
-{
-    return 1;
-}
+our $AUTOLOAD;
 
-sub quit
+sub AUTOLOAD
 {
-    warn "Method not implemented: quit";
-}
-
-sub select
-{
-    warn "Method not implemented: select";
-}
-
-sub expire
-{
-    warn "Method not implemented: expire";
+    my $command = $AUTOLOAD;
+    $command =~ s/.*://;
+    warn "NOT IMPLEMENTED:$command";
 }
 
 1;
