@@ -858,6 +858,8 @@ sub AUTOLOAD
     my $command = $AUTOLOAD;
     $command =~ s/.*://;
     warn "NOT IMPLEMENTED:$command";
+
+    return 1;
 }
 
 1;
