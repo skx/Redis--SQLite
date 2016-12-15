@@ -569,6 +569,13 @@ sub sadd
     }
     $self->{ 'sadd' }->execute( $key, $val, $key, $val );
     $self->{ 'sadd' }->finish();
+
+    if ( $self->{ 'sadd' }->rows > 0 )
+    {
+        return 1;
+    }
+    return 0;
+
 }
 
 
