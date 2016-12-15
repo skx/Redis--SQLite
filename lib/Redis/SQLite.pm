@@ -57,11 +57,11 @@ The following methods are implemented as part of the basic-functionality:
 
 =item INCR
 
-=item INCBY
+=item INCRBY
 
 =item DECR
 
-=item DECBY
+=item DECRBY
 
 =item DEL
 
@@ -360,18 +360,18 @@ sub incr
 {
     my ( $self, $key ) = (@_);
 
-    return ( $self->incby( $key, 1 ) );
+    return ( $self->incrby( $key, 1 ) );
 }
 
 
 
-=head2 incby
+=head2 incrby
 
 Increment and return the value of an (integer) string-key.
 
 =cut
 
-sub incby
+sub incrby
 {
     my ( $self, $key, $amt ) = (@_);
 
@@ -395,18 +395,18 @@ sub decr
 {
     my ( $self, $key ) = (@_);
 
-    return ( $self->decby( $key, 1 ) );
+    return ( $self->decrby( $key, 1 ) );
 }
 
 
 
-=head2 decby
+=head2 decrby
 
 Decrement and return the value of an (integer) string-key.
 
 =cut
 
-sub decby
+sub decrby
 {
     my ( $self, $key, $amt ) = (@_);
 
@@ -435,11 +435,19 @@ sub del
     $str->execute($key);
     $str->finish();
 
+    # Deleted a string-keyu
+    return 1 if ( $str->rows > 0 );
+
     # sets
     my $set = $self->{ 'db' }->prepare("DELETE FROM sets WHERE key=?");
     $set->execute($key);
     $set->finish();
 
+    # Deleted a set-key.
+    return 1 if ( $set->rows > 0 );
+
+    # Deleted nothing.
+    return 0;
 }
 
 
@@ -860,7 +868,7 @@ sub scard
 
 sub ping
 {
-    warn "Method not implemented: ping";
+    return 1;
 }
 
 sub quit
