@@ -30,7 +30,7 @@ $redis->set( "foo", 26 );
 for ( my $i = 0 ; $i < 5 ; $i++ )
 {
     # Decrease by *FOUR* each time.
-    $redis->decby( "foo", 4 );
+    $redis->decrby( "foo", 4 );
 }
 
 # We should have one key now.
