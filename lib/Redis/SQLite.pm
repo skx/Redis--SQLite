@@ -53,6 +53,8 @@ The following methods are implemented as part of the basic-functionality:
 
 =item SET
 
+=item TYPE
+
 =item INCR
 
 =item INCBY
