@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use File::Temp qw! tempfile !;
-use Test::More tests => 20;
+use Test::More tests => 22;
 
 BEGIN
 {
@@ -23,6 +23,9 @@ isa_ok( $redis, "Redis::SQLite", "Created Redis::SQLite object" );
 # We should have zero keys.
 is( scalar $redis->keys(), 0, "There are no keys by default" );
 
+# The type should of an empty key should be undef.
+is( $redis->type("fruits"), undef, "A missing key has no type" );
+
 # Create a set
 foreach my $item (qw! apple bananna orange pineapple pear !)
 {
@@ -31,6 +34,10 @@ foreach my $item (qw! apple bananna orange pineapple pear !)
 
 # We should now have a single key
 is( scalar $redis->keys(), 1, "We've created some set-members" );
+
+# The type should be a 'set'
+is( $redis->type("fruits"), "set", "The key has the correct type" );
+
 
 # The count should match
 is( $redis->scard("fruits"), 5, "We got the correct number of items" );

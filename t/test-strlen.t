@@ -30,17 +30,17 @@ $redis->set( "greet", "Hello" );
 is( scalar $redis->keys(), 1, "There is now a single key" );
 
 # Of five bytes in length.
-is( $redis->strlen( "greet"), 5, "The key is the correct length" );
+is( $redis->strlen("greet"), 5, "The key is the correct length" );
 
 # Now we append
 $redis->append( "greet", ", world" );
 is( scalar $redis->keys(), 1, "There is still only a single key" );
 
 # Fetching the value should result in 'Hello, world'
-is( $redis->get( "greet" ), "Hello, world" , "Appending worked" );
+is( $redis->get("greet"), "Hello, world", "Appending worked" );
 
 # WHich means the size is bigger.
-is( $redis->strlen( "greet" ), 12, "The appended key is longer" );
+is( $redis->strlen("greet"), 12, "The appended key is longer" );
 
 # Cleanup
 unlink($filename);

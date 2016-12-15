@@ -319,6 +319,34 @@ sub set
 }
 
 
+=head2 type
+
+Return the type of the named key.
+
+=cut
+
+sub type
+{
+    my ( $self, $key ) = (@_);
+
+
+    my $sql = $self->{ 'db' }->prepare("SELECT key FROM string WHERE key=?");
+    $sql->execute($key);
+    my $x = $sql->fetchrow_array() || undef;
+    $sql->finish();
+
+    return 'string' if ($x);
+
+    $sql = $self->{ 'db' }->prepare("SELECT key FROM sets WHERE key=?");
+    $sql->execute($key);
+    $x = $sql->fetchrow_array() || undef;
+    $sql->finish();
+
+    return 'set' if ($x);
+
+    return undef;
+}
+
 
 =head2 incr
 

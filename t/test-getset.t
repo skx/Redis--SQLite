@@ -30,15 +30,15 @@ $redis->set( "greet", "Hello" );
 is( scalar $redis->keys(), 1, "There is now a single key" );
 
 # Of five bytes in length.
-is( $redis->strlen( "greet"), 5, "The key is the correct length" );
+is( $redis->strlen("greet"), 5, "The key is the correct length" );
 
 # Now we'll change it
 my $out = $redis->getset( "greet", "Moi" );
 
-is( $out, "Hello", "getset returned the previous value" );
-is( scalar $redis->keys(), 1, "There is still only a single key" );
-is( $redis->get( "greet" ), "Moi" , "The new value was stored as expected" );
-is( $redis->strlen( "greet" ), 3, "The updated value has the right length" );
+is( $out,                  "Hello", "getset returned the previous value" );
+is( scalar $redis->keys(), 1,       "There is still only a single key" );
+is( $redis->get("greet"),  "Moi",   "The new value was stored as expected" );
+is( $redis->strlen("greet"), 3, "The updated value has the right length" );
 
 # Cleanup
 unlink($filename);
