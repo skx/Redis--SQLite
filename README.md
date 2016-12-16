@@ -32,9 +32,18 @@ Simply change from `use Redis` to `use Redis::SQLite` and your code
 should continue to work.
 
 This module is compatible with the original Redis client-library,
-providing you're only using simple key-operations, and set-primitives.
-Specifically this means we do not support any use of Hashes, ZSETS,
-or clustering methods.
+providing you're only performing SET-related operations, and simple
+operations.
+
+Specifically this means we do not support the following:
+
+* Hashes.
+* Hyperlog
+* Lists.
+* Pub/Sub
+* Scripting
+* Transactions.
+* Zsets.
 
 
 MOTIVATION

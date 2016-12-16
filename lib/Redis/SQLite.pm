@@ -37,74 +37,48 @@ features you'd expect from the real Redis module.  Just enough to be useful.
 
 This module is designed to be source compatible with the L<Redis> module,
 providing you're only operating upon either sets or simple strings.
-Specifically we do not support ZSET or HASH-related operations.
 
-The following methods are implemented as part of the basic-functionality:
-
-=over 8
-
-=item APPEND
-
-=item EXISTS
-
-=item GET
-
-=item GETSET
-
-=item SET
-
-=item TYPE
-
-=item INCR
-
-=item INCRBY
-
-=item DECR
-
-=item DECRBY
-
-=item DEL
-
-=item STRLEN
-
-=back
-
-The following set-related methods are implemented:
+Specifically we do not support:
 
 =over 8
 
-=item SADD
+=item HASH
 
-=item SCARD
+For example C<hlen>, C<hkeys>, C<hexists>, etc.
 
-=item SDIFF
+=item Lists
 
-=item SDIFFSTORE
+For example C<lset>, C<ltrim>, etc.
 
-=item SINTER
+=item Scripting
 
-=item SINTERSTORE
+Perl is itself a wonderful scripting language, so we've no need for Lua support.
 
-=item SISMEMBER
+=item ZSET
 
-=item SMEMBERS
-
-=item SMOVE
-
-=item SPOP
-
-=item SRANDMEMBER
-
-=item SREM
-
-=item SUNION
-
-=item SUNIONSTORE
+For example C<zcard>, C<zadd>, C<zcount>, etc.
 
 =back
 
-The only missing set-method is C<SSCAN>, other methods which are missing
-will raise a C<warn>ing.
+All of the set-related primitives are supported, with the exception of C<SSCAN>,
+and the basic commands for working with string-based keys are also present, such
+as:
+
+=over 8
+
+=item append
+
+=item del
+
+=item exists
+
+=item get
+
+=item set
+
+=item etc..
+
+=back
 
 =cut
 
@@ -142,7 +116,7 @@ sub new
     bless( $self, $class );
 
     # Create ~/.predis.db unless an alternative path was specified.
-    my $home = $ENV{'HOME'} || (getpwuid($<))[7];
+    my $home = $ENV{ 'HOME' }      || ( getpwuid($<) )[7];
     my $file = $supplied{ 'path' } || "$home/.predis.db";
 
     my $create = 1;
