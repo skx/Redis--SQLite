@@ -882,6 +882,18 @@ sub ping
 }
 
 
+=head2 echo
+
+Return the parameters given.
+
+=cut
+
+sub echo
+{
+    my( $self, $arg ) = ( @_ );
+
+    return( $arg );
+}
 
 our $AUTOLOAD;
 
