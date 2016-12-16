@@ -869,6 +869,20 @@ sub bitcount
 }
 
 
+=head2 ping
+
+This would usually check if the Redis connection was alive, and the
+server was present, in this implementation we always return true.
+
+=cut
+
+sub ping
+{
+    return 1;
+}
+
+
+
 our $AUTOLOAD;
 
 sub AUTOLOAD
