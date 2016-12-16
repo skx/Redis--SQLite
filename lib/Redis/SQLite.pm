@@ -141,7 +141,10 @@ sub new
     my $self = {};
     bless( $self, $class );
 
-    my $file = $supplied{ 'path' } || $ENV{ 'HOME' } . "/.predis.db";
+    # Create ~/.predis.db unless an alternative path was specified.
+    my $home = $ENV{'HOME'} || (getpwuid($<))[7];
+    my $file = $supplied{ 'path' } || "$home/.predis.db";
+
     my $create = 1;
     $create = 0 if ( -e $file );
 
