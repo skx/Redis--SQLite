@@ -283,6 +283,21 @@ sub set
 }
 
 
+=head2 setnx
+
+Store the given value in the named key, unless that key exists.
+
+=cut
+
+sub setnx
+{
+    my( $self, $key, $val ) = ( @_ );
+
+    return 0 if ( $self->exists($key) );
+
+    $self->set( $key, $val );
+    return 1;
+}
 =head2 type
 
 Return the type of the named key.
@@ -497,7 +512,7 @@ sub randomkey
     }
 
     # The keys we've found
-    my @keys = keys %known;
+    my @keys = CORE::keys %known;
 
     return( $keys[rand @keys] );
 }

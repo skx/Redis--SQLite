@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use File::Temp qw! tempfile !;
-use Test::More tests => 61;
+use Test::More tests => 62;
 
 
 BEGIN
@@ -24,6 +24,8 @@ isa_ok( $o, "Redis::SQLite", "Created Redis::SQLite object" );
 ## Commands operating on string values
 
 ok( $o->set( foo => 'bar' ), 'set foo => bar' );
+
+ok(!$o->setnx(foo => 'bar'), 'setnx foo => bar fails');
 
 cmp_ok( $o->get('foo'), 'eq', 'bar', 'get foo = bar' );
 
