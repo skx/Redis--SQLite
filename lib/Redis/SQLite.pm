@@ -470,6 +470,39 @@ sub keys
 }
 
 
+=head2 randomkey
+
+Return the name of a random key.
+
+=cut
+
+sub randomkey
+{
+    my ( $self ) = (@_);
+
+    # Get all keys into this hash
+    my %known;
+
+    # We run the same query against two tables.
+    foreach my $table (qw! string sets !)
+    {
+        # Get the names of the key.
+        my $str = $self->{ 'db' }->prepare("SELECT key FROM $table");
+        $str->execute();
+        while ( my ($name) = $str->fetchrow_array )
+        {
+            $known{ $name } += 1;
+        }
+        $str->finish();
+    }
+
+    # The keys we've found
+    my @keys = keys %known;
+
+    return( $keys[rand @keys] );
+}
+
+
 =head2 smembers
 
 Return the members of the given set.

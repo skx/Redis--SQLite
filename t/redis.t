@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use File::Temp qw! tempfile !;
-use Test::More tests => 60;
+use Test::More tests => 61;
 
 
 BEGIN
@@ -83,6 +83,8 @@ cmp_ok( $o->type('foo'), 'eq', 'string', 'type' );
 
 is( $o->keys('key-.*'), $key_next + 1, 'key-*' );
 is_deeply( [sort $o->keys('key-.*')], [sort @keys], 'keys' );
+
+ok(my $key = $o->randomkey, 'randomkey');
 
 
 ## All done
