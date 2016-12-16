@@ -261,6 +261,49 @@ sub strlen
 }
 
 
+=head2 rename
+
+Rename a string key.  Deleting the target if it exists.
+
+=cut
+
+sub rename
+{
+    my ( $self, $key, $new_name ) = (@_);
+
+    $self->del($new_name);
+
+    my $val = $self->get($key);
+    $self->set( $new_name, $val );
+
+    $self->del($key);
+}
+
+
+=head2 renamenx
+
+Attempt to rename the given key, if the destination exists then
+nothing happens.
+
+=cut
+
+sub renamenx
+{
+    my ( $self, $key, $new_name ) = (@_);
+
+    return 0 if ( $self->exists($new_name) );
+
+    # Get the value and save it.
+    my $val = $self->get($key);
+    $self->set( $new_name, $val );
+
+    # Remove the original
+    $self->del($key);
+
+    return "OK";
+}
+
+
 =head2 set
 
 Set the value of a string-key.
