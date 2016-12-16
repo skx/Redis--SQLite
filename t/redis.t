@@ -25,7 +25,7 @@ isa_ok( $o, "Redis::SQLite", "Created Redis::SQLite object" );
 
 ok( $o->set( foo => 'bar' ), 'set foo => bar' );
 
-ok(!$o->setnx(foo => 'bar'), 'setnx foo => bar fails');
+ok( !$o->setnx( foo => 'bar' ), 'setnx foo => bar fails' );
 
 cmp_ok( $o->get('foo'), 'eq', 'bar', 'get foo = bar' );
 
@@ -86,7 +86,7 @@ cmp_ok( $o->type('foo'), 'eq', 'string', 'type' );
 is( $o->keys('key-.*'), $key_next + 1, 'key-*' );
 is_deeply( [sort $o->keys('key-.*')], [sort @keys], 'keys' );
 
-ok(my $key = $o->randomkey, 'randomkey');
+ok( my $key = $o->randomkey, 'randomkey' );
 
 
 ## All done

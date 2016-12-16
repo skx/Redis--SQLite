@@ -291,13 +291,14 @@ Store the given value in the named key, unless that key exists.
 
 sub setnx
 {
-    my( $self, $key, $val ) = ( @_ );
+    my ( $self, $key, $val ) = (@_);
 
     return 0 if ( $self->exists($key) );
 
     $self->set( $key, $val );
     return 1;
 }
+
 =head2 type
 
 Return the type of the named key.
@@ -493,7 +494,7 @@ Return the name of a random key.
 
 sub randomkey
 {
-    my ( $self ) = (@_);
+    my ($self) = (@_);
 
     # Get all keys into this hash
     my %known;
@@ -514,7 +515,7 @@ sub randomkey
     # The keys we've found
     my @keys = CORE::keys %known;
 
-    return( $keys[rand @keys] );
+    return ( $keys[rand @keys] );
 }
 
 
@@ -938,9 +939,9 @@ Return the parameters given.
 
 sub echo
 {
-    my( $self, $arg ) = ( @_ );
+    my ( $self, $arg ) = (@_);
 
-    return( $arg );
+    return ($arg);
 }
 
 our $AUTOLOAD;
