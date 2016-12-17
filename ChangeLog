@@ -17,3 +17,6 @@
            * renamenx()
            * setnx()
            * setrange()
+
+0.3 - XX-XX-XXXX
+       - Added missing tests to distribution.
