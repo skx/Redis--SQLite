@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use File::Temp qw! tempfile !;
-use Test::More tests => 12;
+use Test::More tests => 13;
 use Redis;
 
 BEGIN
