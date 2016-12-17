@@ -1,3 +1,18 @@
 0.1 - 15-12-2016
 	- Initial release implementing all set-related primitives and
 	  the commonly used "simple" operations.
+
+0.x -
+	- Implemented several missing primitives:
+	* bitcount()
+	* echo()
+	* getrange()
+	* mget()
+	* mset()
+	* msetnx()
+	* ping()
+	* randomkey()
+	* rename()
+	* renamenx()
+	* setnx()
+	* setrange()
