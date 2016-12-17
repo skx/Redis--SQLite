@@ -115,8 +115,11 @@ sub new
     my $self = {};
     bless( $self, $class );
 
+    # Get the user's home-directory
+    my $home =
+      $ENV{ 'HOME' } || $ENV{ 'USERPROFILE' } || ( getpwuid($<) )[7] || "C:/";
+
     # Create ~/.predis.db unless an alternative path was specified.
-    my $home = $ENV{ 'HOME' }      || ( getpwuid($<) )[7];
     my $file = $supplied{ 'path' } || "$home/.predis.db";
 
     my $create = 1;
