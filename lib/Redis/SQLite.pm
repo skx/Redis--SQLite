@@ -1020,6 +1020,73 @@ sub bitcount
 }
 
 
+sub setbit
+{
+    my ( $self, $key, $offset, $value ) = (@_);
+
+    my $val = $self->get($key) || "";
+    my $len = length($val)     || 0;
+
+    # Convert to binary.
+    my $bin;
+
+    # Convert the current value to binary.
+    foreach my $byte ( split( //, $val ) )
+    {
+        $bin .= unpack( "B*", $byte );
+    }
+
+    # Ensure we have a long-enough string.
+    while ( $offset >= ( $bin ? length($bin) : 0 ) )
+    {
+        $bin .= "00000000";
+    }
+
+    # Change the bit.
+    substr( $bin, $offset, 1, $value );
+
+    my $updated;
+    while ( length($bin) )
+    {
+        my $next = substr( $bin, 0, 8 );
+        $bin = substr( $bin, 8 );
+
+        $updated .= pack( "B*", $next );
+
+    }
+
+    $self->set( $key, $updated );
+}
+
+
+
+sub getbit
+{
+    my ( $self, $key, $offset ) = (@_);
+
+    my $val = $self->get($key) || "";
+    my $len = length($val)     || 0;
+
+    # Convert to binary.
+    my $bin;
+
+    # Convert the current value to binary.
+    foreach my $byte ( split( //, $val ) )
+    {
+        $bin .= unpack( "B*", $byte );
+    }
+
+    # Ensure we have a long-enough string.
+    while ( $offset >= ( $bin ? length($bin) : 0 ) )
+    {
+        $bin .= "00000000";
+    }
+
+    # Get the bit.
+    return ( substr( $bin, $offset, 1 ) );
+}
+
+
 =head2 ping
 
 This would usually check if the Redis connection was alive, and the
