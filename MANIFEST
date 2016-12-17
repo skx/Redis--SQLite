@@ -5,6 +5,7 @@ Makefile.PL
 MANIFEST
 README.md
 META.yml
+misc/get-set-bit-test
 t/00-load.t
 t/manifest.t
 t/pod.t
