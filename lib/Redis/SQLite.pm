@@ -1054,6 +1054,89 @@ sub AUTOLOAD
     return 1;
 }
 
+
+=head2 mget
+
+Return the values of multiple-keys.  If a given key doesn't exist
+then C<undef> will be returned for that entry.
+
+=cut
+
+sub mget
+{
+    my ( $self, @keys ) = (@_);
+
+    my @ret;
+
+    foreach my $key (@keys)
+    {
+        if ( $self->exists($key) )
+        {
+            push( @ret, $self->get($key) );
+        }
+        else
+        {
+            push( @ret, undef );
+        }
+    }
+
+    return (@ret);
+}
+
+
+=head2 mget
+
+Update the values of multiple-keys.
+
+=cut
+
+sub mset
+{
+    my ( $self, @keys ) = (@_);
+
+    while ( scalar @keys )
+    {
+        my ( $key, $val ) = splice( @keys, 0, 2 );
+
+        $self->set( $key, $val );
+    }
+}
+
+
+
+=head2 mgetnx
+
+Update the values of multiple-keys, only if all the keys don't already exist.
+
+=cut
+
+sub msetnx
+{
+    my ( $self, @keys ) = (@_);
+
+    my %hash;
+
+    # Update so we can test the keys.
+    while ( scalar @keys )
+    {
+        my ( $key, $val ) = splice( @keys, 0, 2 );
+        $hash{ $key } = $val;
+    }
+
+    # Does any key already exist?  If so we should do nothing.
+    foreach my $key ( CORE::keys %hash )
+    {
+        return 0 if ( $self->exists($key) );
+    }
+
+    foreach my $key ( CORE::keys %hash )
+    {
+        $self->set( $key, $hash{ $key } );
+    }
+    return 1;
+
+}
+
 1;
 
 
