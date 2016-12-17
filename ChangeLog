@@ -16,3 +16,4 @@
 	* renamenx()
 	* setnx()
 	* setrange()
+        - Fixed our dependencies to correctly include DBD::SQLite.
