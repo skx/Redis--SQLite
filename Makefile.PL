@@ -12,7 +12,7 @@ my %WriteMakefileArgs = (
     VERSION_FROM => 'lib/Redis/SQLite.pm',
     PREREQ_PM    => {
                    'DBI'   => 0,
-                   'DBD::SQLite.'            => 0,
+                   'DBD::SQLite'            => 0,
                  },
 
     BUILD_REQUIRES => {
