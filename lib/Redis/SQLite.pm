@@ -242,6 +242,34 @@ sub getset
 }
 
 
+=head2 getrange
+
+Return the chunk of the key's value between the given offsets.
+
+=cut
+
+sub getrange
+{
+    my ( $self, $key, $start, $end ) = (@_);
+
+    my $val = $self->get($key);
+    my $s   = $start;
+    my $e   = $end;
+
+    if ( $s < 0 )
+    {
+        $s = length($val) + $s;
+    }
+    if ( $e < 0 )
+    {
+        $e = length($val) + $e;
+    }
+
+    return ( substr( $val, $s, ( $e - $s + 1 ) ) );
+}
+
+
+
 =head2 strlen
 
 Return the length of the given value of the given key.
@@ -341,6 +369,34 @@ sub setnx
     $self->set( $key, $val );
     return 1;
 }
+
+
+=head2 setrange
+
+Insert some new data at the given offset of the specific key's value.
+
+If the current length of the key's value is too short it is NULL-padded
+first.
+
+=cut
+
+sub setrange
+{
+    my ( $self, $key, $offset, $data ) = (@_);
+
+    my $val = $self->get($key);
+
+    while ( ( $val ? length($val) : 0 ) < $offset )
+    {
+        $val .= chr(0x00);
+    }
+
+
+    substr( $val, $offset, length($data), $data );
+    $self->set( $key, $val );
+    return ( length($val) );
+}
+
 
 =head2 type
 
