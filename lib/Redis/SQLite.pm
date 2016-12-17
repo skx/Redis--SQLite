@@ -96,7 +96,7 @@ use warnings;
 use DBI;
 
 
-our $VERSION = '0.1';
+our $VERSION = '0.2';
 
 
 =head2 new
