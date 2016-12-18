@@ -3,21 +3,15 @@
 use strict;
 use warnings;
 
-use File::Temp qw! tempfile !;
-use Test::More tests => 20;
+use Test::More tests => 19;
 
 BEGIN
 {
     use_ok( "Redis::SQLite", "We could load the module" );
 }
 
-# Create a new temporary file
-my ( $fh, $filename ) = tempfile();
-ok( -e $filename, "The temporary file was created" );
-unlink($filename);
-
 # Create a new object
-my $redis = Redis::SQLite->new( path => $filename );
+my $redis = Redis::SQLite->new( path => ':memory:' );
 isa_ok( $redis, "Redis::SQLite", "Created Redis::SQLite object" );
 
 # We should have zero keys.
@@ -60,6 +54,3 @@ is( $redis->msetnx( "key_1", "ok_1", "key_2", "ok_2" ),
 
 is( $redis->get("key_1"), "ok_1", "Retrieving the value set works" );
 is( $redis->get("key_2"), "ok_2", "Retrieving the value set works" );
-
-# Cleanup
-unlink($filename);

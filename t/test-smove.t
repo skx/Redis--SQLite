@@ -3,21 +3,15 @@
 use strict;
 use warnings;
 
-use File::Temp qw! tempfile !;
-use Test::More tests => 12;
+use Test::More tests => 11;
 
 BEGIN
 {
     use_ok( "Redis::SQLite", "We could load the module" );
 }
 
-# Create a new temporary file
-my ( $fh, $filename ) = tempfile();
-ok( -e $filename, "The temporary file was created" );
-unlink($filename);
-
 # Create a new object
-my $redis = Redis::SQLite->new( path => $filename );
+my $redis = Redis::SQLite->new( path => ':memory:' );
 isa_ok( $redis, "Redis::SQLite", "Created Redis::SQLite object" );
 
 # We should have zero keys.
@@ -53,7 +47,3 @@ ok( !$redis->sismember( "girls", "Robin" ),
 # Finally we try to move a value that doesn't exist.
 $ret = $redis->smove( "girls", "boys", "Jo" );
 is( $ret, 0, "Moving a missing element won't" );
-
-
-# Cleanup
-unlink($filename);

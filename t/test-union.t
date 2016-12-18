@@ -3,21 +3,15 @@
 use strict;
 use warnings;
 
-use File::Temp qw! tempfile !;
-use Test::More tests => 10;
+use Test::More tests => 9;
 
 BEGIN
 {
     use_ok( "Redis::SQLite", "We could load the module" );
 }
 
-# Create a new temporary file
-my ( $fh, $filename ) = tempfile();
-ok( -e $filename, "The temporary file was created" );
-unlink($filename);
-
 # Create a new object
-my $redis = Redis::SQLite->new( path => $filename );
+my $redis = Redis::SQLite->new( path => ":memory:" );
 isa_ok( $redis, "Redis::SQLite", "Created Redis::SQLite object" );
 
 # We should have zero keys.
@@ -48,6 +42,3 @@ is( scalar $redis->keys(), 3, "After SUNIONSTORE we have three keys" );
 # The union-set should have the number of members we expect.
 is( $redis->scard("combined"),
     6, "The combined set has the right number of members" );
-
-# Cleanup
-unlink($filename);

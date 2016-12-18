@@ -3,8 +3,7 @@
 use strict;
 use warnings;
 
-use File::Temp qw! tempfile !;
-use Test::More tests => 62;
+use Test::More tests => 61;
 
 
 BEGIN
@@ -12,13 +11,8 @@ BEGIN
     use_ok( "Redis::SQLite", "We could load the module" );
 }
 
-# Create a new temporary file
-my ( $fh, $filename ) = tempfile();
-ok( -e $filename, "The temporary file was created" );
-unlink($filename);
-
 # Create a new object
-my $o = Redis::SQLite->new( path => $filename );
+my $o = Redis::SQLite->new( path => ':memory:' );
 isa_ok( $o, "Redis::SQLite", "Created Redis::SQLite object" );
 
 ## Commands operating on string values

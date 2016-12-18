@@ -3,21 +3,15 @@
 use strict;
 use warnings;
 
-use File::Temp qw! tempfile !;
-use Test::More tests => 27;
+use Test::More tests => 26;
 
 BEGIN
 {
     use_ok( "Redis::SQLite", "We could load the module" );
 }
 
-# Create a new temporary file
-my ( $fh, $filename ) = tempfile();
-ok( -e $filename, "The temporary file was created" );
-unlink($filename);
-
 # Create a new object
-my $redis = Redis::SQLite->new( path => $filename );
+my $redis = Redis::SQLite->new( path => ':memory:' );
 isa_ok( $redis, "Redis::SQLite", "Created Redis::SQLite object" );
 
 # We should have zero keys.
@@ -51,6 +45,3 @@ foreach my $item (qw! 1 2 3 4 5 6 7 8 9 10 !)
     is( $redis->sismember( "numbers", $n ), 0,
         "membership test succeeded: $n" );
 }
-
-# Cleanup
-unlink($filename);

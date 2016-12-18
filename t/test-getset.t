@@ -3,21 +3,15 @@
 use strict;
 use warnings;
 
-use File::Temp qw! tempfile !;
-use Test::More tests => 10;
+use Test::More tests => 9;
 
 BEGIN
 {
     use_ok( "Redis::SQLite", "We could load the module" );
 }
 
-# Create a new temporary file
-my ( $fh, $filename ) = tempfile();
-ok( -e $filename, "The temporary file was created" );
-unlink($filename);
-
 # Create a new object
-my $redis = Redis::SQLite->new( path => $filename );
+my $redis = Redis::SQLite->new( path => ':memory:' );
 isa_ok( $redis, "Redis::SQLite", "Created Redis::SQLite object" );
 
 # We should have zero keys.
@@ -39,6 +33,3 @@ is( $out,                  "Hello", "getset returned the previous value" );
 is( scalar $redis->keys(), 1,       "There is still only a single key" );
 is( $redis->get("greet"),  "Moi",   "The new value was stored as expected" );
 is( $redis->strlen("greet"), 3, "The updated value has the right length" );
-
-# Cleanup
-unlink($filename);
