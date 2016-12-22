@@ -18,5 +18,7 @@
            * setnx()
            * setrange()
 
-0.3 - XX-XX-XXXX
-       - Added missing tests to distribution.
+0.3 - 22-12-2016
+	- Added missing tests to distribution.
+	- Updated test-cases to use in-memory SQLite database, with the hope
+        this will fix test-cases on Microsoft Windows.
