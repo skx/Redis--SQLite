@@ -22,6 +22,7 @@ t/test-inter.t
 t/test-keys.t
 t/test-members.t
 t/test-multi.t
+t/test-multi-byte.t
 t/test-ranges.t
 t/test-rename.t
 t/test-sets.t
