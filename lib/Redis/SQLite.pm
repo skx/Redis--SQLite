@@ -1090,13 +1090,22 @@ sub getbit
 =head2 ping
 
 This would usually check if the Redis connection was alive, and the
-server was present, in this implementation we always return true.
+server was present, in this implementation we return C<1> if the underlying
+database connection is still present.
 
 =cut
 
 sub ping
 {
-    return 1;
+    my ($self) = (@_);
+    if ( $self->{ 'db' } )
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 
@@ -1112,6 +1121,59 @@ sub echo
 
     return ($arg);
 }
+
+
+=head2 quit
+
+
+When this method is invoked the underlying connection to the SQLite database
+is closed, which will cause further operations to fail upon the database.
+
+=cut
+
+sub quit
+{
+    my ($self) = (@_);
+
+    if ( $self->{ 'db' } )
+    {
+        $self->{ 'db' }->disconnect();
+        $self->{ 'db' } = undef;
+        return 1;
+    }
+
+    return 0;
+}
+
+
+=head2 shutdown
+
+This method is synonymous with L<quit>.
+
+=cut
+
+sub shutdown
+{
+    my ($self) = (@_);
+
+    return ( $self->quit() );
+}
+
+
+=head2 DESTROY
+
+When this method is invoked the underlying connection to the SQLite database
+is closed, which will cause further operations to fail upon the database.
+
+=cut
+
+sub DESTROY
+{
+    my ($self) = (@_);
+
+    return ( $self->quit() );
+}
+
 
 our $AUTOLOAD;
 
