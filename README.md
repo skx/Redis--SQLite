@@ -8,8 +8,6 @@ LINKS
 
 * Github
    * https://github.com/skx/Redis--SQLite
-* Mirror
-   * https://git.steve.org.uk/cpan/Redis--SQLite
 
 
 SYNOPSIS

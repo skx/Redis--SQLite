@@ -35,8 +35,6 @@ my %WriteMakefileArgs = (
                'https://github.com/skx/Redis--SQLite/issues',
              repository =>
                'https://github.com/skx/Redis--SQLite.git',
-             GitMirror =>
-               'http://git.steve.org.uk/cpan/Redis--SQLite',
          },
     },
 );

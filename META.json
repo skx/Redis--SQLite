@@ -50,8 +50,7 @@
       ],
       "repository" : {
          "url" : "https://github.com/skx/Redis--SQLite.git"
-      },
-      "x_GitMirror" : "http://git.steve.org.uk/cpan/Redis--SQLite"
+      }
    },
    "version" : "0.1"
 }

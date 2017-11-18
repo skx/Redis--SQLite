@@ -23,7 +23,6 @@ requires:
   DBI: '0'
   perl: '5.008'
 resources:
-  GitMirror: http://git.steve.org.uk/cpan/Redis--SQLite
   bugtracker: https://github.com/skx/Redis--SQLite/issues
   homepage: https://github.com/skx/Redis--SQLite/
   license: http://dev.perl.org/licenses/
